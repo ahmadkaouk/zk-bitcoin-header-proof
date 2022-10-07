@@ -1,5 +1,5 @@
 [package]
-name = "block-header-proof-methods-guest"
+name = "block-header-zkproof-methods-guest"
 version = "0.1.0"
 edition = "2021"
 
@@ -11,6 +11,8 @@ opt-level = "z"
 
 [dependencies]
 risc0-zkvm-guest = "0.11"
+block-header-zkproof-core = { path = "../../core"}
+
 
 [build-dependencies]
 risc0-build = "0.11"
