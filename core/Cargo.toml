@@ -1,7 +1,13 @@
 [package]
-name = "block-header-zkproof-core"
+name = "block-header-core"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 serde = "1.0"
+primitive-types = { version = "0.12", default-features = false }
+bincode = "1.3"
+sha2 = "0.10"
+hex = "0.4"
+
+[dev-dependencies]
