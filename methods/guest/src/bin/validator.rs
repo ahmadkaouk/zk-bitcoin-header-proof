@@ -2,7 +2,7 @@
 #![no_std]
 
 use block_header_core::*;
-use risc0_zkvm_guest::{env, sha};
+use risc0_zkvm_guest::env;
 
 risc0_zkvm_guest::entry!(main);
 
@@ -10,9 +10,11 @@ pub fn main() {
     // Load the block to validate from the host
     let block: BlockHeader = env::read();
 
-    // Compute the hash of the block header
-    // let block_hash = sha::raw_digest(sha::digest_u8_slice(&block.block_hash()));
-    let target = block.target();
+    let hash_u256 = U256::from_big_endian(&block.block_hash());
+    // Check if block hash is invalid, if true panic
+    if hash_u256 > block.target() {
+        panic!("Invalid Block Header");
+    }
 
     // Commit Block Header constituents to the header
     env::commit({

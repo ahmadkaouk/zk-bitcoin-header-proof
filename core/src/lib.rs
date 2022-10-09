@@ -1,4 +1,4 @@
-use primitive_types::U256;
+pub use primitive_types::U256;
 use serde::{Deserialize, Serialize};
 use sha2::{Sha256, Digest};
 /// A Bitcoin block header, which contains all the block information
@@ -118,5 +118,13 @@ mod tests {
         let block: BlockHeader = bincode::deserialize(&hex::decode(block_hex).unwrap()).unwrap();
 
         assert_eq!(block.target(), U256::from_str_radix("0x6a93b30000000000000000000000000000000000000000000000", 16).unwrap());
+    }
+    #[test]
+    fn test_block_valid() {
+        let block_hex = "010000009500c43a25c624520b5100adf82cb9f9da72fd2447a496bc600b0000000000006cd862370395dedf1da2841ccda0fc489e3039de5f1ccddef0e834991a65600ea6c8cb4db3936a1ae3143991";
+        let block: BlockHeader = bincode::deserialize(&hex::decode(block_hex).unwrap()).unwrap();
+        let hash_u256 = U256::from_big_endian(&block.block_hash());
+
+        assert!(hash_u256 <= block.target());
     }
 }
