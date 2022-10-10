@@ -1,7 +1,8 @@
 pub use primitive_types::U256;
 use serde::{Deserialize, Serialize};
-use sha2::{Sha256, Digest};
-/// A Bitcoin block header, which contains all the block information
+use sha2::{Digest, Sha256};
+/// A Bitcoin block header, which contains all the block information and
+/// metadata
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct BlockHeader {
     pub version: i32,
@@ -18,7 +19,8 @@ impl BlockHeader {
         // Step 1 Transform block into little endian hexadecimal (in form of bytes)
         let block_le = bincode::serialize(&self).unwrap();
 
-        // Step 2 Apply a SHA-256 on the binary representation of the litte endian hex obtained in step 1
+        // Step 2 Apply a SHA-256 on the binary representation of the litte endian hex
+        // obtained in step 1
         let mut hasher = Sha256::new();
         hasher.update(block_le);
         let hash1 = hasher.finalize();
@@ -27,8 +29,8 @@ impl BlockHeader {
         let mut hasher = Sha256::new();
         hasher.update(hash1);
         let mut hash = hasher.finalize().to_vec();
-       
-        // Step 4 Convert the result into little endian 
+
+        // Step 4 Convert the result into little endian
         hash.reverse();
         hash
     }
@@ -56,7 +58,7 @@ impl BlockHeader {
     }
 }
 
-/// Contains Block Header informations to be commited to the journal
+/// Contains all Block Header informations to be commited to the journal
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct BlockHeaderCommit {
     pub version: i32,
@@ -112,13 +114,19 @@ mod tests {
                 .unwrap()
         );
     }
+
     #[test]
     fn test_block_target_from_bits() {
         let block_hex = "010000009500c43a25c624520b5100adf82cb9f9da72fd2447a496bc600b0000000000006cd862370395dedf1da2841ccda0fc489e3039de5f1ccddef0e834991a65600ea6c8cb4db3936a1ae3143991";
         let block: BlockHeader = bincode::deserialize(&hex::decode(block_hex).unwrap()).unwrap();
 
-        assert_eq!(block.target(), U256::from_str_radix("0x6a93b30000000000000000000000000000000000000000000000", 16).unwrap());
+        assert_eq!(
+            block.target(),
+            U256::from_str_radix("0x6a93b30000000000000000000000000000000000000000000000", 16)
+                .unwrap()
+        );
     }
+
     #[test]
     fn test_block_valid() {
         let block_hex = "010000009500c43a25c624520b5100adf82cb9f9da72fd2447a496bc600b0000000000006cd862370395dedf1da2841ccda0fc489e3039de5f1ccddef0e834991a65600ea6c8cb4db3936a1ae3143991";

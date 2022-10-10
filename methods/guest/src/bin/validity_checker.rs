@@ -10,13 +10,15 @@ pub fn main() {
     // Load the block to validate from the host
     let block: BlockHeader = env::read();
 
+    // transform the block hash to u256 to compare it with the target
     let hash_u256 = U256::from_big_endian(&block.block_hash());
+
     // Check if block hash is invalid, if true panic
     if hash_u256 > block.target() {
         panic!("Invalid Block Header");
     }
 
-    // Commit Block Header constituents to the header
+    // Commit Block Header constituents to the receipt
     env::commit({
         &BlockHeaderCommit {
             version: block.version,
